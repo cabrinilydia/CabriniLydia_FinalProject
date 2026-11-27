@@ -30,7 +30,7 @@ That's what Desi Mirror is about. It's the ritual I grew up watching, and still 
 
 At the critique the question I got was: why chapters, and why these ones? The answer is that the chapters are simply the order I actually get ready in. I hadn't said it out loud before, but once I wrote it down it was obvious.
 
-1. **Steam.** You come out of a hot shower and the mirror is fogged. Before anything else you have to wipe it to see yourself. So the piece starts with a fogged mirror: you breathe on it, wipe it with your palm, write your name with a finger. It's also the moment people realise the mirror is actually watching them.
+1. **Steam.** You come out of a hot shower and the mirror is fogged. Before anything else you have to wipe it to see yourself. A foggy mirror is also really nostalgic. Almost everyone has written their name or drawn a smiley face in the steam on a bathroom mirror, so people recognise it straight away, before they know anything else about the piece. That's why it comes first: it's the hook. You breathe on the glass, wipe it with your palm and write your name with a finger, just like you would on a real one. It's also the moment people realise the mirror is actually watching them.
 2. **Glam.** This is the part I love: sitting at the vanity, makeup first, then the jewellery. A bindi on your forehead, jhumkas on your ears, bangles on your wrists. Real jewellery sits *on* your body and moves with you, so in the mirror it had to stick to you too. The jhumkas swing when you turn your head, the way they actually do.
 3. **Outfit.** Choosing the outfit means going through a wardrobe that isn't only yours, trying things on, and throwing the ones you don't want onto the floor. I made the phone the wardrobe because it's something you hold and go through, like the clothes in your hands. Tilt to browse, flick to throw it on the pile, tap to wear it.
 4. **Snack Mission.** This is the one chapter that leaves the mirror, and that was on purpose. You take the look you just built with you (your real face and the outfit you chose) into the most shared room in the house: the kitchen. It's based on my own kitchen. My family doesn't really hide snacks (in the game, blaming Amma and Paati for hiding them is the joke), but nothing is ever in the container it should be. Open the cookie tin and it's the sewing kit. Open the ice-cream tub and it's sambar. Looking for food in my house really is a game: you keep opening tins until you find the thing. So I made it a game. I also really enjoyed the Play Environments lesson, and this was my chance to take that further.
@@ -109,29 +109,9 @@ p5.js 1.11.11 · ml5.js 1.3.1 (faceMesh, handPose) · MediaPipe FaceMesh and Han
 
 ## 3. How successful was it?
 
-### What works well
-
 At the critique people genuinely had fun with it. They liked the design, the colours and how many little elements there are to it. The tracking holds up well in normal lighting: the bindi stays put, the jhumkas swing, and the outfit follows you as you move. The phone link worked on the live site, and because the whole thing is in the browser, anyone can try it from the link with no install.
 
 The thing I'm proudest of is that it feels like my getting-ready routine. The order of the chapters, the shared wardrobe, the kitchen full of mismatched tins: those are all from my house.
-
-### Challenges
-
-- **Two models on one page** crashing on load (fixed by loading them one after the other).
-- **Mirroring** the video and the points consistently (fixed by doing all the flipping myself).
-- **Making flat illustrations fit a moving body.** Every outfit image is drawn differently, so one formula made some outfits huge and others tiny. I ended up giving each outfit its own shoulder width, centre and drop.
-- **Cutting the art out cleanly.** Some illustrations had backgrounds close to the outfit's own colours, so automatic background removal ate parts of the clothes and those needed a colour-based fill instead.
-- **Lighting and distance.** Tracking gets shaky in a dark room or if you sit too far away, so the run instructions tell you to sit about an arm's length away with your face in the middle.
-- **Phone permissions.** iPhones only share motion data after you tap a button and allow it, so the phone page starts with a "start" button that asks for permission.
-- **The "why".** My lecturer's feedback was that I needed to think more deeply about why I made this and why the chapters are what they are. The piece came from instinct, from things I loved. Writing this was how I put words to it.
-
-### What I'd change with more time
-
-- **Share the mirror.** In my house the mirror is shared, so I'd like two faces at once (faceMesh can track more than one), so you can get ready with your sister or your mom in the same frame.
-- **More jewellery.** Indian jewellery goes on your head, ears and neck, and right now it's only the bindi, jhumkas and bangles. I'd add a maattal linking the jhumka up into the hair, a head piece and necklaces.
-- **More languages.** Malayalam, Telugu and other Indian languages in the title and the kitchen, not just Hindi and Tamil.
-- **My own illustrations.** Drawing the outfits myself so I could make the exact pieces from my family's wardrobe.
-- **Lighting.** A brightness check that warns you when the room is too dark for tracking.
 
 ---
 
