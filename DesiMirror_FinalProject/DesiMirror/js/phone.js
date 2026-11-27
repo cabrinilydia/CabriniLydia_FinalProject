@@ -1,0 +1,153 @@
+/* Desi Mirror · phone.js  (DM3014 Final Project · Cabrini Lydia Lourdu Leo)
+   Runs on the phone. Reads the gyroscope (tilt) and accelerometer (flick)
+   and sends them to the mirror through Firebase. What the phone does
+   depends on the mirror's chapter:
+     Outfit -> tilt browses, flick tosses, tap wear
+     Snacks -> tilt runs, flick (or JUMP) jumps
+   back / next are always there, so the phone can drive the whole piece.
+*/
+
+const TILT_ON = 28; // *** degrees of tilt that flips to the next outfit
+const TILT_OFF = 12; // back under this to re-arm
+const FLICK = 15; // *** how hard a flick has to be (m/s²)
+
+const room = (new URLSearchParams(location.search).get("room") || "").toUpperCase();
+document.getElementById("room").textContent = room || "????";
+const $ = (id) => document.getElementById(id);
+
+let ref = null;
+let mode = "wait"; // "wardrobe" | "kitchen" | "wait"
+let gamma = 0;
+let armed = true;
+let lastFlick = 0;
+let lastSent = 0;
+let prevAcc = null;
+
+function setStatus(t) {
+  $("status").textContent = t;
+}
+
+function setMode(m, chapterName) {
+  mode = m;
+  $("p-wardrobe").classList.toggle("on", m === "wardrobe");
+  $("p-kitchen").classList.toggle("on", m === "kitchen");
+  $("p-wait").classList.toggle("on", m === "wait");
+  if (chapterName === "Start") {
+    $("waitch").textContent = "Mirror is waiting";
+    $("cnext").textContent = "start ▶";
+  } else {
+    $("waitch").textContent = chapterName ? "Mirror is on: " + chapterName : "…";
+    $("cnext").textContent = "next ▶";
+  }
+}
+
+function firebaseReady() {
+  return (
+    typeof firebase !== "undefined" &&
+    typeof firebaseConfig !== "undefined" &&
+    firebaseConfig.databaseURL &&
+    !/your-project/.test(firebaseConfig.databaseURL)
+  );
+}
+
+if (!room) {
+  setStatus("no room code: scan the QR code on the mirror");
+} else if (!firebaseReady()) {
+  setStatus("Firebase isn't set up in config.js, so the phone can't reach the mirror");
+} else {
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  ref = db.ref("desi/" + room + "/phone");
+  db.ref("desi/" + room + "/state").on("value", (snap) => {
+    const v = snap.val() || {};
+    $("outfit").textContent = v.outfit || "…";
+    $("wearing").textContent = v.wearing ? "wearing: " + v.wearing : "";
+    if (v.chapter === "Outfit") setMode("wardrobe");
+    else if (v.chapter === "Snacks") setMode("kitchen");
+    else setMode("wait", v.chapter);
+    setStatus("connected to room " + room);
+  });
+  db.ref(".info/connected").on("value", (s) => {
+    if (s.val() !== true) setStatus("connecting…");
+  });
+}
+
+function send(action) {
+  if (!ref) return;
+  ref.set({ seq: Date.now(), action, tilt: Math.round(gamma) });
+  if (navigator.vibrate) navigator.vibrate(action === "toss" || action === "jump" ? [20, 30, 40] : 25);
+  if (mode === "wardrobe") {
+    const h = $("hanger");
+    h.style.transform = action === "toss" ? "translateY(40px) rotate(60deg)" : action === "wear" ? "scale(1.25)" : h.style.transform;
+    setTimeout(() => (h.style.transform = "rotate(" + gamma * 0.6 + "deg)"), 250);
+  }
+}
+
+function onOrientation(e) {
+  if (e.gamma === null) return;
+  gamma = e.gamma; // left / right tilt, -90..90
+  if (mode === "wardrobe") {
+    $("hanger").style.transform = "rotate(" + gamma * 0.6 + "deg)";
+    if (armed && gamma > TILT_ON) {
+      send("next");
+      armed = false;
+    } else if (armed && gamma < -TILT_ON) {
+      send("prev");
+      armed = false;
+    } else if (Math.abs(gamma) < TILT_OFF) armed = true;
+  } else if (mode === "kitchen") {
+    // the dot shows which way you're running
+    $("dot").style.transform = "translate(" + Math.max(-1, Math.min(1, gamma / 25)) * 100 + "px,0)";
+  }
+  // stream the tilt (about 12 times a second) so the mirror can follow it
+  const now = Date.now();
+  if (ref && now - lastSent > 80) {
+    lastSent = now;
+    ref.update({ tilt: Math.round(gamma) });
+  }
+}
+
+function onMotion(e) {
+  const now = Date.now();
+  let mag = 0;
+  if (e.acceleration && e.acceleration.x !== null) {
+    const a = e.acceleration;
+    mag = Math.hypot(a.x, a.y, a.z);
+  } else if (e.accelerationIncludingGravity) {
+    const a = e.accelerationIncludingGravity;
+    if (prevAcc) mag = Math.hypot(a.x - prevAcc.x, a.y - prevAcc.y, a.z - prevAcc.z);
+    prevAcc = { x: a.x, y: a.y, z: a.z };
+  }
+  if (mag > FLICK && now - lastFlick > 900) {
+    lastFlick = now;
+    if (mode === "wardrobe") send("toss");
+    if (mode === "kitchen") send("jump");
+  }
+}
+
+async function start() {
+  try {
+    // iPhones need permission, asked from a tap
+    if (typeof DeviceOrientationEvent !== "undefined" && DeviceOrientationEvent.requestPermission) {
+      await DeviceOrientationEvent.requestPermission();
+    }
+    if (typeof DeviceMotionEvent !== "undefined" && DeviceMotionEvent.requestPermission) {
+      await DeviceMotionEvent.requestPermission();
+    }
+  } catch (e) {
+    setStatus("motion not allowed: use the buttons instead");
+  }
+  window.addEventListener("deviceorientation", onOrientation);
+  window.addEventListener("devicemotion", onMotion);
+  $("start").style.display = "none";
+}
+
+
+$("go").addEventListener("click", start);
+$("prev").addEventListener("click", () => send("prev"));
+$("next").addEventListener("click", () => send("next"));
+$("toss").addEventListener("click", () => send("toss"));
+$("wear").addEventListener("click", () => send("wear"));
+$("jump").addEventListener("click", () => send("jump"));
+$("cnext").addEventListener("click", () => send("chapter-next"));
+$("cprev").addEventListener("click", () => send("chapter-prev"));
