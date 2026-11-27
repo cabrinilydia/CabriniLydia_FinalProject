@@ -28,8 +28,6 @@ That's what Desi Mirror is about. It's the ritual I grew up watching, and still 
 
 ### Why these five chapters, in this order
 
-At the critique the question I got was: why chapters, and why these ones? The answer is that the chapters are simply the order I actually get ready in. I hadn't said it out loud before, but once I wrote it down it was obvious.
-
 1. **Steam.** You come out of a hot shower and the mirror is fogged. Before anything else you have to wipe it to see yourself. A foggy mirror is also really nostalgic. Almost everyone has written their name or drawn a smiley face in the steam on a bathroom mirror, so people recognise it straight away, before they know anything else about the piece. That's why it comes first: it's the hook. You breathe on the glass, wipe it with your palm and write your name with a finger, just like you would on a real one. It's also the moment people realise the mirror is actually watching them.
 2. **Glam.** This is the part I love: sitting at the vanity, makeup first, then the jewellery. A bindi on your forehead, jhumkas on your ears, bangles on your wrists. Real jewellery sits *on* your body and moves with you, so in the mirror it had to stick to you too. The jhumkas swing when you turn your head, the way they actually do.
 3. **Outfit.** Choosing the outfit means going through a wardrobe that isn't only yours, trying things on, and throwing the ones you don't want onto the floor. I made the phone the wardrobe because it's something you hold and go through, like the clothes in your hands. Tilt to browse, flick to throw it on the pile, tap to wear it.
